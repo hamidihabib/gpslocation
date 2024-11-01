@@ -41,15 +41,6 @@ const Mensen: React.FC = () => {
     <div>
       Latitude: {latitude}
       Longitude: {longitude}
-      <h1>Alle Mensen</h1>
-      <p>Alle Mensen</p>
-      {mensen.length > 0 && mensen.map((mensa) => (
-        <Link href={`/mensen/${mensa.id}`} key={mensa.id}>
-          <a>
-            <h3>{mensa.name}</h3>
-          </a>
-        </Link>
-      ))}
     </div>
   );
 };
