@@ -26,6 +26,7 @@ const Location: React.FC = () => {
   return (
     <div>
       Latitude: {latitude}
+      <br/>
       Longitude: {longitude}
     </div>
   );
