@@ -1,11 +1,5 @@
-"use client"
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-
-interface Location {
-  latitude: number;
-  longitude: number;
-}
 
 interface Mensa {
   id: number;
@@ -14,9 +8,10 @@ interface Mensa {
 
 const Mensen: React.FC = () => {
   const [mensen, setMensen] = useState<Mensa[]>([]);
-  const [location, setLocation] = useState<Location | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
-  const fetchApiData = async ({ latitude, longitude }: Location) => {
+  const fetchApiData = async (latitude: number, longitude: number) => {
     const res = await fetch(`https://openmensa.org/api/v2/canteens?near[lat]=${latitude}&near[lng]=${longitude}&near[dist]=50000`);
     const data = await res.json();
     setMensen(data);
@@ -26,8 +21,8 @@ const Mensen: React.FC = () => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
-          const { latitude, longitude } = coords;
-          setLocation({ latitude, longitude });
+          setLatitude(coords.latitude);
+          setLongitude(coords.longitude);
         },
         (error) => {
           console.error("Geolocation error:", error.message);
@@ -37,10 +32,10 @@ const Mensen: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (location) {
-      fetchApiData(location);
+    if (latitude !== null && longitude !== null) {
+      fetchApiData(latitude, longitude);
     }
-  }, [location]);
+  }, [latitude, longitude]);
 
   return (
     <div>
