@@ -39,6 +39,8 @@ const Mensen: React.FC = () => {
 
   return (
     <div>
+      Latitude: {latitude}
+      Longitude: {longitude}
       <h1>Alle Mensen</h1>
       <p>Alle Mensen</p>
       {mensen.length > 0 && mensen.map((mensa) => (
