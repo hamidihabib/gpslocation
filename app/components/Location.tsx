@@ -1,51 +1,60 @@
-"use client";
+"use client"
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
-import { useState } from "react";
-
-interface LocationProps {
-  latitude: number | null;
-  longitude: number | null;
+interface Location {
+  latitude: number;
+  longitude: number;
 }
 
-const Location: React.FC = () => {
-  const [location, setLocation] = useState<LocationProps>({
-    latitude: null,
-    longitude: null,
-  });
-  const [error, setError] = useState<string | null>(null);
+interface Mensa {
+  id: number;
+  name: string;
+}
 
-  const getLocation = () => {
-    if (navigator.geolocation) {
+const Mensen: React.FC = () => {
+  const [mensen, setMensen] = useState<Mensa[]>([]);
+  const [location, setLocation] = useState<Location | null>(null);
+
+  const fetchApiData = async ({ latitude, longitude }: Location) => {
+    const res = await fetch(`https://openmensa.org/api/v2/canteens?near[lat]=${latitude}&near[lng]=${longitude}&near[dist]=50000`);
+    const data = await res.json();
+    setMensen(data);
+  };
+
+  useEffect(() => {
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
+        ({ coords }) => {
+          const { latitude, longitude } = coords;
+          setLocation({ latitude, longitude });
         },
         (error) => {
-          setError(error.message);
+          console.error("Geolocation error:", error.message);
         }
       );
-    } else {
-      setError("Geolocation is not supported by this browser.");
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (location) {
+      fetchApiData(location);
+    }
+  }, [location]);
 
   return (
     <div>
-      <h2>GPS Information</h2>
-      {location.latitude && location.longitude ? (
-        <p>
-          Latitude: {location.latitude} <br />
-          Longitude: {location.longitude}
-        </p>
-      ) : (
-        <button onClick={getLocation}>Get Location</button>
-      )}
-      {error && <p>Error: {error}</p>}
+      <h1>Alle Mensen</h1>
+      <p>Alle Mensen</p>
+      {mensen.length > 0 && mensen.map((mensa) => (
+        <Link href={`/mensen/${mensa.id}`} key={mensa.id}>
+          <a>
+            <h3>{mensa.name}</h3>
+          </a>
+        </Link>
+      ))}
     </div>
   );
 };
 
-export default Location;
+export default Mensen;
