@@ -1,20 +1,25 @@
-"use client"
+"use client";
+import { useEffect, useState } from "react";
 
-import { useEffect, useState } from 'react';
-
+interface Coords {
+  latitude: number | null;
+  longitude: number | null;
+}
 
 const Location: React.FC = () => {
-  const [latitude, setLatitude] = useState<number | null>(null);
-  const [longitude, setLongitude] = useState<number | null>(null);
-
-
+  const [location, setLocation] = useState<Coords>({
+    latitude: null,
+    longitude: null,
+  });
 
   useEffect(() => {
-    if ('geolocation' in navigator) {
+    if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
-          setLatitude(coords.latitude);
-          setLongitude(coords.longitude);
+          setLocation({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          });
         },
         (error) => {
           console.error("Geolocation error:", error.message);
@@ -25,9 +30,9 @@ const Location: React.FC = () => {
 
   return (
     <div>
-      Latitude: {latitude}
-      <br/>
-      Longitude: {longitude}
+      Latitude: {location.latitude}
+      <br />
+      Longitude: {location.longitude}
     </div>
   );
 };
